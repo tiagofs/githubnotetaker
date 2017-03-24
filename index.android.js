@@ -11,36 +11,50 @@ import {
   Text,
   View,
   Navigator,
-  TouchableOpacity
+  TouchableOpacity,
+  BackAndroid
 } from 'react-native';
 
-import Main from './Main';
+import Dashboard from './Components/Dashboard'
+import Main from './Components/Main';
+import Profile from './Components/Profile';
+import Repositories from './Components/Repositories';
+import Web from './Components/Helpers/Web';
 
+const routes = [
+  {name: 'First Scene', id: 0},
+  {name: 'Main Scene', id: 1},
+];
 
-// const routes = [
-//   {titulo: 'First Scene', numeroEcra: 0},
-//   {titulo: 'Second Scene', numeroEcra: 1},
-// ];
-
+var navigator;
 export default class GithubNoteTaker extends Component {
   render() {
     return (
       <Navigator
+        ref={(nav) => { navigator = nav; }}
         initialRoute={routes[0]}
         renderScene={this.renderScene.bind(this)}
         configureScene={(route, routeStack) =>   Navigator.SceneConfigs.FadeAndroid}
       />
-
     );
   }
+  componentWillUnmount(){
+    BackAndroid.addEventListener('hardwareBackPress', () => {
+      if(navigator && navigator.getCurrentRoutes().length > 1) {
+        navigator.pop();
+        return true;
+      }
+      return false;
+    });
+  }
   renderScene(route, navigator) {
-    var routeIndex = route.numeroEcra;
+    var routeIndex = route.id;
 
-    switch (route.numeroEcra) {
+    switch (route.id) {
       case 0:
         return(
           <View style={{padding:20}}>
-            <Text>{route.titulo}</Text>
+            <Text>{route.name}</Text>
             <TouchableOpacity onPress={() => {
                 navigator.push(routes[1]);
             }}>
@@ -51,23 +65,35 @@ export default class GithubNoteTaker extends Component {
         break;
       case 1:
         return(
-          <View style={{padding:20}}>
-            <Text>{route.titulo}</Text>
-            <TouchableOpacity onPress={() => {
-                navigator.pop();
-            }}>
-              <Text>Go back</Text>
-            </TouchableOpacity>
-          </View>
+          <Main navigator={navigator} />
+        );
+        break;
+      case 3:
+        return(
+          <Dashboard navigator={navigator} userInfo={route.passProps}/>
+        );
+        break;
+      case 4:
+        return(
+          <Profile navigator={navigator} userInfo={route.passProps}/>
+        );
+        break;
+      case 5:
+        return(
+          <Repositories navigator={navigator} userInfo={route.userInfo} repos={route.repos}/>
+        );
+        break;
+      case 6:
+        return(
+          <Web navigator={navigator} url={route.passProps}/>
         );
         break;
       default:
-
     }
 
     return(
       <View style={{padding:20}}>
-        <Text>{route.titulo}</Text>
+        <Text>{route.name}</Text>
         <TouchableOpacity onPress={() => {
           if (routeIndex === 0) {
             navigator.push(routes[1]);
@@ -81,6 +107,7 @@ export default class GithubNoteTaker extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
