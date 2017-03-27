@@ -20,6 +20,7 @@ import Main from './Components/Main';
 import Profile from './Components/Profile';
 import Repositories from './Components/Repositories';
 import Web from './Components/Helpers/Web';
+import Notes from './Components/Notes';
 
 const routes = [
   {name: 'First Scene', id: 0},
@@ -86,6 +87,11 @@ export default class GithubNoteTaker extends Component {
       case 6:
         return(
           <Web navigator={navigator} url={route.passProps}/>
+        );
+        break;
+      case 7:
+        return(
+          <Notes navigator={navigator} userInfo={route.userInfo} notes={route.notes}/>
         );
         break;
       default:

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Api from '../Utils/Api';
+import Notes from '../Components/Notes';
 import {
   StyleSheet,
   Text,
@@ -59,7 +60,15 @@ export default class Main extends Component {
       });
   }
   goToNotes(){
-    console.log('Going to Notes');
+    Api.getNotes(this.props.userInfo.login)
+      .then((res) => {
+        res = res || {};
+        this.props.navigator.push({
+          id: 7,
+          notes: res,
+          userInfo: this.props.userInfo
+        })
+      });
   }
   render(){
     return (
